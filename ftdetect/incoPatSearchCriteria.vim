@@ -1,1 +1,1 @@
-autocmd BufRead,BufNewFile *.sc set filetype=incoPatSearchCriteria
+autocmd BufRead,BufNewFile *.incopat set filetype=incoPatSearchCriteria
