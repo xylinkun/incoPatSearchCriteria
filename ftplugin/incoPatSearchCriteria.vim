@@ -119,7 +119,7 @@ function! s:BeautifyItem(item)
     let item = substitute(item, '\w\+', '\U&', "g")
   else
     let item = substitute(item, '\w\+', '\L\u&', "g")
-    if stridx(item, " ") >= 0
+    if item =~ '[ ()（）]'
       let item = '"' . item . '"'
     endif
   endif
@@ -147,7 +147,7 @@ function! s:FixSCinBracket(Sorted=v:false)
     execute "normal! va)\<esc>"
     let l:_indent = repeat(" ", indent("'<") + 8)
     normal! gv"zd
-    let l:line = trim(@z, "()")
+    let l:line = substitute(@z, '^(\|)$', '', 'g')
     let l:lines = split(l:line, '\c\s*\(\<or\>\|[\r\n]\)\+\s*')
     let l:lines = BeautifyItems(l:lines)
     if a:Sorted
