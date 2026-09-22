@@ -14,11 +14,20 @@ augroup filetype_incoPatSearchCriteria
     iabbrev ） )
 augroup END
 
+" 邻近算符 (w)/(n)/(s)/(p)/(sen) 与频率算符 (nf)，n 为 1~100
+let s:relation = '\%(\d\{1,2}[wn]\|[wnsp]\|sen\|100f\|[1-9]\d\?f\)'
+
 function! s:PrettyLine(line)
     let l:line = substitute(a:line, '\c\([a-z0-9-]\+\)\s*=\s*', '\L\1 = ', 'g')
-    let l:line = substitute(l:line, '\c\S\zs\s*\<\(and\|or\|to\)\>\s*\ze\S', ' \L\1 ', 'g')
-    let l:line = substitute(l:line, '\c\_^\s*\zs\<\(and\|not\)\>\s*', '\L\1 ', 'g')
+    " 语义检索关键词 R/RAD/RPD 必须保持大写
+    let l:line = substitute(l:line, '\c\<\(rad\|rpd\|r\)\>\s*=\s*', '\U\1 = ', 'g')
+    let l:line = substitute(l:line, '\c\S\zs\s*\<\(and\|or\|not\|to\|opt\)\>\s*\ze\S', ' \L\1 ', 'g')
+    let l:line = substitute(l:line, '\c\_^\s*\zs\<\(and\|not\|opt\)\>\s*', '\L\1 ', 'g')
     let l:line = substitute(l:line, '\c\_^\s*\zs\<\(or\)\>\s*', '\L\1  ', 'g')
+    " 邻近/频率算符统一小写，两侧只保留一个空格
+    let l:line = substitute(l:line, '\c(' . s:relation . ')', '\L&', 'g')
+    let l:line = substitute(l:line, '\c\S\zs\s*\ze(' . s:relation . ')', ' ', 'g')
+    let l:line = substitute(l:line, '\c(' . s:relation . ')\zs\s*\ze[^[:space:])]', ' ', 'g')
     let l:line = substitute(l:line, '\([\[(]\)\s*\ze\S', '\1', 'g')
     let l:line = substitute(l:line, '\S\zs\s*\([\])]\)', '\1', 'g')
     let l:line = substitute(l:line, '\c[A-Z0-9]\@<!\([A-HY]\|[A-HY]\d\{2}\|[A-HY]\d\{2}[A-Z]\|[A-HY]\d\{2}[A-Z]\d\{1,4}\|[A-HY]\d\{2}[A-Z]\d\{1,4}\/\d\{1,5}\)[/A-Z0-9]\@!', '\U\1', 'g')
